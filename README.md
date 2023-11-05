@@ -2,4 +2,5 @@
 
 
 
-![image](https://github.com/asidsx/astro_colonyServerInstaller/assets/106923482/8cd0876d-b2ea-47ba-9aef-0aacacc203ec)
+![image](https://github.com/asidsx/astro_colonyServerInstaller/assets/106923482/571ad77c-6869-47d3-a34e-98fed0935fb3)
+
