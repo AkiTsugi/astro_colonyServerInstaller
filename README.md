@@ -14,3 +14,5 @@ pip install pyinstaller
 ```
 pyinstaller astroserverinstaller.py --onefile --noconsole
 ```
+
+Or simply take the already compiled program https://github.com/asidsx/astro_colonyServerInstaller/releases.
