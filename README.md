@@ -6,9 +6,11 @@
 
 
 
----
+```
 pip install requests
 pip install psutil
 pip install pyinstaller
-
+```
+```
 pyinstaller astroserverinstaller.py --onefile --noconsole
+```
