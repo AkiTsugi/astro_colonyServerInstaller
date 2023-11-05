@@ -146,7 +146,7 @@ def on_open_guide():
 
 root = tk.Tk()
 root.title("Astro Colony Server Manager")
-root.geometry("300x380")
+root.geometry("300x400")
 
 
 server_name_label = tk.Label(root, text="Server Name:")
@@ -156,7 +156,8 @@ server_name_entry.pack()
 
 
 
-
+query_port_label = tk.Label(root, text="Query Port:")
+query_port_label.pack()
 config = configparser.ConfigParser()
 if config.read('conf.ini'):
     query_port = ()
