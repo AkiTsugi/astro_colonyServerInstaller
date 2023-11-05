@@ -1,6 +1,6 @@
 # astro_colonyServerInstaller
 
-After clicking on (Start server), the data (Server name) and (Query Port) are saved in the conf.ini file, and then it is stored for future launches
+After clicking on (Start server), the data (Server name) and (Query Port), the state of the Logging checkbox are saved in the conf.ini file, and then it is stored for future launches.
 
 ![image](https://github.com/asidsx/astro_colonyServerInstaller/assets/106923482/571ad77c-6869-47d3-a34e-98fed0935fb3)
 
