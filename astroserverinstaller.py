@@ -11,6 +11,8 @@ import sys
 import webbrowser
 
 
+
+
 def is_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
@@ -31,9 +33,6 @@ def run_as_admin():
 if not is_admin():
     run_as_admin()
     sys.exit(0)
-
-
-
 
 
 def download_steamcmd():
@@ -77,27 +76,6 @@ def download_astro_colony():
         '+app_update', '2662210', 'validate', '+quit'  
     ]
     subprocess.Popen([command] + args, cwd='steamcmd')
-
-def create_server():
-    server_name = server_name_entry.get()  
-    query_port = query_port_entry.get()  
-    log_enabled = log_var.get()
-
-    config = configparser.ConfigParser()
-    config['Server'] = {
-        'SteamServerName': server_name,
-        'QueryPort': query_port,
-        'LogEnabled': log_enabled
-    }
-
-
-    with open('conf.ini', 'w') as configfile:
-        config.write(configfile)
-
-    server_command = f'Astro_Colony\\AstroColonyServer.exe -SteamServerName={server_name} -QueryPort={query_port}'
-    if log_enabled:
-        server_command += ' -log'
-    subprocess.Popen(server_command, shell=True, close_fds=True)
 
 
 def open_server_config():
@@ -144,9 +122,110 @@ def on_open_guide():
     webbrowser.open(url)
 
 
+def create_server():
+    server_name = server_name_entry.get()
+    query_port = query_port_entry.get()
+    server_password = server_password_entry.get()
+    seed = seed_entry.get()
+    map_name = map_name_entry.get()
+    max_players = max_players_entry.get()
+    savegame_name = savegame_name_entry.get()
+    should_load_latest_savegame = load_latest_savegame_var.get()
+    admin_list = admin_list_entry.get()
+    shared_technologies = shared_technologies_var.get()
+    oxygen_consumption = oxygen_consumption_var.get()
+    free_construction = free_construction_var.get()
+
+    config = configparser.ConfigParser()
+
+    config['Server'] = {
+        'SteamServerName': server_name,
+        'QueryPort': query_port,
+        'LogEnabled': log_var.get()
+    }
+
+    config['AstroColony.EHServerSubsystem'] = {
+        'ServerPassword': server_password,
+        'Seed': seed,
+        'MapName': map_name,
+        'MaxPlayers': max_players,
+        'SavegameName': savegame_name,
+        'ShouldLoadLatestSavegame': should_load_latest_savegame,
+        'AdminList': admin_list,
+        'SharedTechnologies': shared_technologies,
+        'OxygenConsumption': oxygen_consumption,
+        'FreeConstruction': free_construction
+    }
+
+    with open('conf.ini', 'w') as configfile:
+        config.write(configfile)
+
+    with open('Astro_Colony/AstroColony/Saved/Config/WindowsServer/ServerSettings.ini', 'w') as server_settings_file:
+        server_settings_file.write('[/Script/AstroColony.EHServerSubsystem]\n')
+        server_settings_file.write(f'ServerPassword={server_password}\n')
+        server_settings_file.write(f'Seed={seed}\n')
+        server_settings_file.write(f'MapName={map_name}\n')
+        server_settings_file.write(f'MaxPlayers={max_players}\n')
+        server_settings_file.write(f'SavegameName={savegame_name}\n')
+        server_settings_file.write(f'ShouldLoadLatestSavegame={should_load_latest_savegame}\n')
+        server_settings_file.write(f'AdminList={admin_list}\n')
+        server_settings_file.write(f'SharedTechnologies={shared_technologies}\n')
+        server_settings_file.write(f'OxygenConsumption={oxygen_consumption}\n')
+        server_settings_file.write(f'FreeConstruction={free_construction}\n')
+
+    server_command = f'Astro_Colony\\AstroColonyServer.exe -SteamServerName={server_name} -QueryPort={query_port}'
+    if log_var.get():
+        server_command += ' -log'
+    subprocess.Popen(server_command, shell=True, close_fds=True)
+
+
+
+
+def load_server_settings():
+    server_settings = configparser.ConfigParser()
+
+    server_settings_file_path = 'Astro_Colony/AstroColony/Saved/Config/WindowsServer/ServerSettings.ini'
+
+    if not os.path.exists(server_settings_file_path):
+        print("File ServerSettings.ini not found. Creating the file with default settings.")
+        with open(server_settings_file_path, 'w') as server_settings_file:
+            server_settings_file.write('[/Script/AstroColony.EHServerSubsystem]\n')
+            server_settings_file.write('ServerPassword=\n')
+            server_settings_file.write('Seed=\n')
+            server_settings_file.write('MapName=SuperName\n')
+            server_settings_file.write('MaxPlayers=5\n')
+            server_settings_file.write('SavegameName=\n')
+            server_settings_file.write('ShouldLoadLatestSavegame=False\n')
+            server_settings_file.write('AdminList=\n')
+            server_settings_file.write('SharedTechnologies=False\n')
+            server_settings_file.write('OxygenConsumption=False\n')
+            server_settings_file.write('FreeConstruction=False\n')
+
+    server_settings.read('Astro_Colony/AstroColony/Saved/Config/WindowsServer/ServerSettings.ini')
+
+    return server_settings
+
+def load_settings_into_fields():
+    server_settings = load_server_settings()
+
+    server_password_entry.insert(0, server_settings.get('/Script/AstroColony.EHServerSubsystem', 'ServerPassword'))
+    seed_entry.insert(0, server_settings.get('/Script/AstroColony.EHServerSubsystem', 'Seed'))
+    map_name_entry.insert(0, server_settings.get('/Script/AstroColony.EHServerSubsystem', 'MapName'))
+    max_players_entry.insert(0, server_settings.get('/Script/AstroColony.EHServerSubsystem', 'MaxPlayers'))
+    savegame_name_entry.insert(0, server_settings.get('/Script/AstroColony.EHServerSubsystem', 'SavegameName'))
+    load_latest_savegame_var.set(server_settings.getboolean('/Script/AstroColony.EHServerSubsystem', 'ShouldLoadLatestSavegame'))
+    admin_list_entry.insert(0, server_settings.get('/Script/AstroColony.EHServerSubsystem', 'AdminList'))
+    shared_technologies_var.set(server_settings.getboolean('/Script/AstroColony.EHServerSubsystem', 'SharedTechnologies'))
+    oxygen_consumption_var.set(server_settings.getboolean('/Script/AstroColony.EHServerSubsystem', 'OxygenConsumption'))
+    free_construction_var.set(server_settings.getboolean('/Script/AstroColony.EHServerSubsystem', 'FreeConstruction'))
+
+
+
+
+
 root = tk.Tk()
 root.title("Astro Colony Server Manager")
-root.geometry("300x400")
+root.geometry("300x760")
 
 
 server_name_label = tk.Label(root, text="Server Name:")
@@ -212,6 +291,54 @@ on_open_guide = tk.Button(root, text="Open Guide page", command=on_open_guide)
 on_open_guide.pack()
 
 
+server_password_label = tk.Label(root, text="Server Password:")
+server_password_label.pack()
+server_password_entry = tk.Entry(root)
+server_password_entry.pack()
+
+seed_label = tk.Label(root, text="Seed:")
+seed_label.pack()
+seed_entry = tk.Entry(root)
+seed_entry.pack()
+
+map_name_label = tk.Label(root, text="Map Name:")
+map_name_label.pack()
+map_name_entry = tk.Entry(root)
+map_name_entry.pack()
+
+max_players_label = tk.Label(root, text="Max Players:")
+max_players_label.pack()
+max_players_entry = tk.Entry(root)
+max_players_entry.pack()
+
+savegame_name_label = tk.Label(root, text="Savegame Name:")
+savegame_name_label.pack()
+savegame_name_entry = tk.Entry(root)
+savegame_name_entry.pack()
+
+load_latest_savegame_var = tk.BooleanVar()
+load_latest_savegame_checkbutton = tk.Checkbutton(root, text="Should Load Latest Savegame", variable=load_latest_savegame_var)
+load_latest_savegame_checkbutton.pack()
+
+admin_list_label = tk.Label(root, text="Admin List (Steam PlayerIDs, comma separated):")
+admin_list_label.pack()
+admin_list_entry = tk.Entry(root)
+admin_list_entry.pack()
+
+shared_technologies_var = tk.BooleanVar()
+shared_technologies_checkbutton = tk.Checkbutton(root, text="Shared Technologies", variable=shared_technologies_var)
+shared_technologies_checkbutton.pack()
+
+oxygen_consumption_var = tk.BooleanVar()
+oxygen_consumption_checkbutton = tk.Checkbutton(root, text="Oxygen Consumption", variable=oxygen_consumption_var)
+oxygen_consumption_checkbutton.pack()
+
+free_construction_var = tk.BooleanVar()
+free_construction_checkbutton = tk.Checkbutton(root, text="Free Construction", variable=free_construction_var)
+free_construction_checkbutton.pack()
+
+
+
 
 
 config = configparser.ConfigParser()
@@ -220,5 +347,6 @@ if config.read('conf.ini'):
     query_port_entry.insert(0, config['Server']['QueryPort'])
     log_var.set(config.getboolean('Server', 'LogEnabled'))
     
+load_settings_into_fields()
 
 root.mainloop()
