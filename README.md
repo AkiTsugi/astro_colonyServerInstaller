@@ -34,7 +34,8 @@ The program provides a convenient way for users to manage and configure their As
 ---
 After clicking on (Start server), the data (Server name) and (Query Port), the state of the Logging checkbox and others are saved in the conf.ini & ServerSettings.ini files, and then it is stored for future launches.
 
-![image](https://github.com/asidsx/astro_colonyServerInstaller/assets/106923482/90e60f6a-58db-4540-8a2c-250fd6a6f1ea)
+![image](https://github.com/asidsx/astro_colonyServerInstaller/assets/106923482/d843ae25-6e30-43f5-9a43-d115c5ca2302)
+
 
 
 
