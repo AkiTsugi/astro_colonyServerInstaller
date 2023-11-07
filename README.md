@@ -42,9 +42,7 @@ After clicking on (Start server) or (Install Service), the data (Server name) an
 
 
 ```
-pip install requests
-pip install psutil
-pip install pyinstaller
+pip install pyinstaller configparser requests psutil
 ```
 ```
 pyinstaller astroserverinstaller.py --onefile --noconsole
