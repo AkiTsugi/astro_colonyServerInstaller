@@ -185,7 +185,7 @@ def load_server_settings():
     server_settings_file_path = 'Astro_Colony/AstroColony/Saved/Config/WindowsServer/ServerSettings.ini'
 
     if not os.path.exists(server_settings_file_path):
-        print("File ServerSettings.ini not found. Creating the file with default settings.")
+        os.makedirs("Astro_Colony/AstroColony/Saved/Config/WindowsServer/")
         with open(server_settings_file_path, 'w') as server_settings_file:
             server_settings_file.write('[/Script/AstroColony.EHServerSubsystem]\n')
             server_settings_file.write('ServerPassword=\n')
