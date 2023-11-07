@@ -70,7 +70,20 @@ def stop_updating():
     running2 = False	
 
 
+def update_currentv():
+    global current_version
+    try:
+        config = configparser.ConfigParser()
+        config.read('conf.ini')
+        current_version = int(config.get('Server', 'latest_version'))
+        current_version_label.config(text=str(current_version))  
+    except Exception as e:
+        current_version = 0
+        current_version_label.config(text=str(current_version))
+
+
 def download_steamcmd():
+
     nssm_url = 'https://nssm.cc/release/nssm-2.24.zip'
     r = requests.get(nssm_url)
     with open("nssm-2.24.zip", "wb") as code:
@@ -102,9 +115,10 @@ def download_steamcmd():
         '+app_update', '2662210', 'validate', '+quit'  
     ]
     subprocess.Popen([command] + args, cwd='steamcmd')
+    update_currentv()
+
 
 def download_astro_colony():
-    global current_version
     command = 'steamcmd/steamcmd.exe'
     args = [
         '+login', 'anonymous',
@@ -112,16 +126,7 @@ def download_astro_colony():
         '+app_update', '2662210', 'validate', '+quit'  
     ]
     subprocess.Popen([command] + args, cwd='steamcmd')
-
-    try:
-        config = configparser.ConfigParser()
-        config.read('conf.ini')
-        current_version = int(config.get('Server', 'latest_version'))
-        current_version_label.config(text=str(current_version))  
-    except Exception as e:
-        current_version = 0
-        current_version_label.config(text=str(current_version))
-
+    update_currentv()
 
 
 def kill_server_process():
@@ -142,7 +147,7 @@ def open_ports(query_port):
 def on_install_service(server_name, query_port):
     cmd_command = f'nssm.exe install AstroColonyServerService %CD%\\Astro_Colony\\AstroColonyServer.exe -SteamServerName={server_name} -QueryPort={query_port}'
     os.system(f'cmd /C "{cmd_command} & timeout 3"')
-
+    save_configs()
 
 
 
@@ -164,9 +169,7 @@ def on_open_guide():
     url = "https://bit.ly/AstroColonyDedicatedDoc"
     webbrowser.open(url)
 
-
-def create_server():
-
+def save_configs():
     server_name = server_name_entry.get()
     query_port = query_port_entry.get()
     server_password = server_password_entry.get()
@@ -189,15 +192,8 @@ def create_server():
         'LogEnabled': log_var.get()
 
     }
-
-
-
     with open('conf.ini', 'w') as configfile:
         config.write(configfile)
-
-
-
-
 
     with open('Astro_Colony/AstroColony/Saved/Config/WindowsServer/ServerSettings.ini', 'w') as server_settings_file:
         server_settings_file.write('[/Script/AstroColony.EHServerSubsystem]\n')
@@ -212,11 +208,15 @@ def create_server():
         server_settings_file.write(f'OxygenConsumption={oxygen_consumption}\n')
         server_settings_file.write(f'FreeConstruction={free_construction}\n')
 
+
+def create_server():
+    server_name = server_name_entry.get()
+    query_port = query_port_entry.get()
     server_command = f'Astro_Colony\\AstroColonyServer.exe -SteamServerName={server_name} -QueryPort={query_port}'
     if log_var.get():
         server_command += ' -log'
     subprocess.Popen(server_command, shell=True, close_fds=True)
-
+    save_configs()
 
 
 
