@@ -9,35 +9,70 @@ import shutil
 import ctypes
 import sys
 import webbrowser
+import threading
+import time
+import json
+import threading
+
+
+running = True
+running2 = True
+
+current_version = 0 
+latest_version = 0 
+
+
+def update_version():
+    global latest_version
+    global running
+
+    while running:
+        # Make a request to the API to check for a new release
+        url = "https://api.steamcmd.net/v1/info/2662210"
+        response = requests.get(url)
+        data = response.json()
+
+        # Get the latest version
+        latest_version = data["data"]["2662210"]["_change_number"]
+        latest_version_label.config(text=str(latest_version))
+
+        # Wait for 300 seconds before making the next request
+        time.sleep(300)
+
+def check_version():
+    global running2
+    while running2:
+    # Check if the latest version is different from the current version
+        if str(latest_version) != str(current_version):
+            status_label.config(text="New version available.", fg="red")
+        else:
+            status_label.config(text="No new version available.", fg="black")
+        root.update()
+    # Wait for 1 second before checking again
+    time.sleep(2)
 
 
 
+def start_updating():
+    global running
+    running = True
+    global running2
+    running2 = True
+    update_thread = threading.Thread(target=update_version, daemon=True)
+    check_thread = threading.Thread(target=check_version, daemon=True)
+    update_thread.start()
+    check_thread.start()
 
-def is_admin():
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
-
-def run_as_admin():
-    if sys.platform != 'win32':
-        return
-
-    try:
-        ASADMIN = 'asadmin'
-        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, ASADMIN, None, 1)
-    except Exception as e:
-        print("Failed to run as admin:", e)
-        sys.exit(1)
-
-if not is_admin():
-    run_as_admin()
-    sys.exit(0)
+def stop_updating():
+    global running
+    running = False
+    global running2
+    running2 = False	
 
 
 def download_steamcmd():
-    url = 'https://nssm.cc/release/nssm-2.24.zip'
-    r = requests.get(url)
+    nssm_url = 'https://nssm.cc/release/nssm-2.24.zip'
+    r = requests.get(nssm_url)
     with open("nssm-2.24.zip", "wb") as code:
         code.write(r.content)
 
@@ -51,8 +86,8 @@ def download_steamcmd():
         shutil.rmtree('nssm-2.24')
 
         
-    url = 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip'
-    r = requests.get(url)
+    steamcmd_url = 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip'
+    r = requests.get(steamcmd_url)
     with open("steamcmd.zip", "wb") as code:
         code.write(r.content)
     fantasy_zip = zipfile.ZipFile('steamcmd.zip')
@@ -69,6 +104,7 @@ def download_steamcmd():
     subprocess.Popen([command] + args, cwd='steamcmd')
 
 def download_astro_colony():
+    global current_version
     command = 'steamcmd/steamcmd.exe'
     args = [
         '+login', 'anonymous',
@@ -76,6 +112,15 @@ def download_astro_colony():
         '+app_update', '2662210', 'validate', '+quit'  
     ]
     subprocess.Popen([command] + args, cwd='steamcmd')
+
+    try:
+        config = configparser.ConfigParser()
+        config.read('conf.ini')
+        current_version = int(config.get('Server', 'latest_version'))
+        current_version_label.config(text=str(current_version))  
+    except Exception as e:
+        current_version = 0
+        current_version_label.config(text=str(current_version))
 
 
 
@@ -121,6 +166,7 @@ def on_open_guide():
 
 
 def create_server():
+
     server_name = server_name_entry.get()
     query_port = query_port_entry.get()
     server_password = server_password_entry.get()
@@ -139,24 +185,19 @@ def create_server():
     config['Server'] = {
         'SteamServerName': server_name,
         'QueryPort': query_port,
+        'latest_version': latest_version,
         'LogEnabled': log_var.get()
+
     }
 
-    config['AstroColony.EHServerSubsystem'] = {
-        'ServerPassword': server_password,
-        'Seed': seed,
-        'MapName': map_name,
-        'MaxPlayers': max_players,
-        'SavegameName': savegame_name,
-        'ShouldLoadLatestSavegame': should_load_latest_savegame,
-        'AdminList': admin_list,
-        'SharedTechnologies': shared_technologies,
-        'OxygenConsumption': oxygen_consumption,
-        'FreeConstruction': free_construction
-    }
+
 
     with open('conf.ini', 'w') as configfile:
         config.write(configfile)
+
+
+
+
 
     with open('Astro_Colony/AstroColony/Saved/Config/WindowsServer/ServerSettings.ini', 'w') as server_settings_file:
         server_settings_file.write('[/Script/AstroColony.EHServerSubsystem]\n')
@@ -223,7 +264,9 @@ def load_settings_into_fields():
 
 root = tk.Tk()
 root.title("Astro Colony Server Manager")
-root.geometry("300x730")
+root.geometry("300x820")
+
+
 
 
 server_name_label = tk.Label(root, text="Server Name:")
@@ -332,16 +375,55 @@ free_construction_var = tk.BooleanVar()
 free_construction_checkbutton = tk.Checkbutton(root, text="Free Construction", variable=free_construction_var)
 free_construction_checkbutton.pack()
 
+try:
+    config = configparser.ConfigParser()
+    config.read('conf.ini')
+    current_version = int(config.get('Server', 'latest_version'))
+except Exception as e:
+    current_version = "0"
+    print(e)
+
+
+currentt_version_label = tk.Label(root, text="Current version")
+currentt_version_label.pack()
+# Create labels to display the current version and the latest version
+current_version_label = tk.Label(root, text=current_version)
+current_version_label.pack()
+
+latestt_version_label = tk.Label(root, text="Latest version")
+latestt_version_label.pack()
+latest_version_label = tk.Label(root, text="Checking for updates...")
+latest_version_label.pack()
+
+# Create a label to display the status of the update
+status_label = tk.Label(root, text="")
+status_label.pack()
+
 
 
 
 
 config = configparser.ConfigParser()
-if config.read('conf.ini'):
-    server_name_entry.insert(0, config['Server']['SteamServerName'])
-    query_port_entry.insert(0, config['Server']['QueryPort'])
-    log_var.set(config.getboolean('Server', 'LogEnabled'))
+if not config.read('conf.ini'):
+    config['Server'] = {
+        'SteamServerName': '',
+        'QueryPort': '',
+        'LogEnabled': False,
+        'latest_version': 0,
+    }
+
+    with open('conf.ini', 'w') as configfile:
+        config.write(configfile)
+
+server_name_entry.insert(0, config.get('Server', 'SteamServerName'))
+query_port_entry.insert(0, config.get('Server', 'QueryPort'))
+log_var.set(config.getboolean('Server', 'LogEnabled'))
+
+
     
+start_updating()
+
 load_settings_into_fields()
+root.protocol("WM_DELETE_WINDOW", lambda: (stop_updating(), root.destroy()))
 
 root.mainloop()
