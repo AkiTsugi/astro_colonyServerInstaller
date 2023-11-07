@@ -8,7 +8,7 @@
 
 `Start Server:` Initiates the Astro Colony server with the specified configuration settings.
 
-`Close Server Process:` Terminates the Astro Colony server process to stop the server.
+`Close Server Process:` Terminates the Astro Colony server process to stop the server (Without checking the "Enable Logging and Console" option, the server window is not visible. Usually, you can terminate it using the Task Manager, and that's why this button is provided here).
 
 `Install Service:` Installs Astro Colony as a Windows service for easier management (with the specified configuration settings).
 
