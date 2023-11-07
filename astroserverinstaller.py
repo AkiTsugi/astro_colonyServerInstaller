@@ -78,8 +78,6 @@ def download_astro_colony():
     subprocess.Popen([command] + args, cwd='steamcmd')
 
 
-def open_server_config():
-    subprocess.Popen('notepad.exe Astro_Colony/AstroColony/Saved/Config/WindowsServer/ServerSettings.ini', shell=True)
 
 def kill_server_process():
     for process in psutil.process_iter(attrs=['pid', 'name']):
@@ -225,7 +223,7 @@ def load_settings_into_fields():
 
 root = tk.Tk()
 root.title("Astro Colony Server Manager")
-root.geometry("300x760")
+root.geometry("300x730")
 
 
 server_name_label = tk.Label(root, text="Server Name:")
@@ -278,9 +276,6 @@ stop_server_button.pack()
 delete_server_button = tk.Button(root, text="Delete Service", command=on_delete_service)
 delete_server_button.pack()
 
-
-open_config_button = tk.Button(root, text="Open Server Config", command=open_server_config)
-open_config_button.pack()
 
 
 open_ports_button = tk.Button(root, text="Open UDP Ports", command=lambda: open_ports(int(query_port_entry.get())))
