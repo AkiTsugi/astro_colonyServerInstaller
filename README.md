@@ -1,4 +1,4 @@
-# astro_colonyServerInstaller
+# Astro Colony Server Installer
 
 **Here's what it can do for the user:**
 
