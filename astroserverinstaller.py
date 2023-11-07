@@ -14,6 +14,27 @@ import time
 import json
 import threading
 
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
+def run_as_admin():
+    if sys.platform != 'win32':
+        return
+
+    try:
+        ASADMIN = 'asadmin'
+        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, ASADMIN, None, 1)
+    except Exception as e:
+        print("Failed to run as admin:", e)
+        sys.exit(1)
+
+if not is_admin():
+    run_as_admin()
+    sys.exit(0)
+
 
 running = True
 running2 = True
