@@ -1,5 +1,7 @@
 # Astro Colony Server Installer
 
+To create a server, choose the folder where you want to deploy it, then place this program in that folder and start it. Next, click on "Download SteamCMD & Install".
+
 **Here's what it can do for the user:**
 
 `Download SteamCMD:` Allows the user to download SteamCMD, a command-line tool used to download and update the Astro Colony server files.
