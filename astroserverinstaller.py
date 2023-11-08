@@ -91,16 +91,27 @@ def stop_updating():
     running2 = False	
 
 
-def update_currentv():
+def update_vs():
     global current_version
+
     try:
         config = configparser.ConfigParser()
         config.read('conf.ini')
-        current_version = int(config.get('Server', 'latest_version'))
-        current_version_label.config(text=str(current_version))  
+
+
+        config.set('Server', 'latest_version', str(latest_version))
+        
+
+        with open('conf.ini', 'w') as configfile:
+            config.write(configfile)
+
+        current_version = latest_version
+        current_version_label.config(text=str(current_version))
+
     except Exception as e:
         current_version = 0
         current_version_label.config(text=str(current_version))
+
 
 
 def download_steamcmd():
@@ -136,10 +147,11 @@ def download_steamcmd():
         '+app_update', '2662210', 'validate', '+quit'  
     ]
     subprocess.Popen([command] + args, cwd='steamcmd')
-    update_currentv()
+    update_vs()
 
 
 def download_astro_colony():
+
     command = 'steamcmd/steamcmd.exe'
     args = [
         '+login', 'anonymous',
@@ -147,7 +159,7 @@ def download_astro_colony():
         '+app_update', '2662210', 'validate', '+quit'  
     ]
     subprocess.Popen([command] + args, cwd='steamcmd')
-    update_currentv()
+    update_vs()
 
 
 def kill_server_process():
@@ -206,13 +218,15 @@ def save_configs():
 
     config = configparser.ConfigParser()
 
-    config['Server'] = {
-        'SteamServerName': server_name,
-        'QueryPort': query_port,
-        'latest_version': latest_version,
-        'LogEnabled': log_var.get()
 
-    }
+    config.read('conf.ini')
+
+
+    config['Server']['SteamServerName'] = server_name
+    config['Server']['QueryPort'] = query_port
+    config['Server']['LogEnabled'] = log_var.get()
+
+
     with open('conf.ini', 'w') as configfile:
         config.write(configfile)
 
