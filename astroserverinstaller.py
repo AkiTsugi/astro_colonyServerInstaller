@@ -205,6 +205,7 @@ def on_open_guide():
 def save_configs():
     server_name = server_name_entry.get()
     query_port = query_port_entry.get()
+    log_enabled = log_var.get()
     server_password = server_password_entry.get()
     seed = seed_entry.get()
     map_name = map_name_entry.get()
@@ -217,18 +218,18 @@ def save_configs():
     free_construction = free_construction_var.get()
 
     config = configparser.ConfigParser()
-
-
     config.read('conf.ini')
 
+    try:
+        config['Server']['SteamServerName'] = server_name
+        config['Server']['QueryPort'] = query_port
+        config['Server']['LogEnabled'] = str(log_enabled)
 
-    config['Server']['SteamServerName'] = server_name
-    config['Server']['QueryPort'] = query_port
-    config['Server']['LogEnabled'] = log_var.get()
 
-
-    with open('conf.ini', 'w') as configfile:
-        config.write(configfile)
+        with open('conf.ini', 'w') as configfile:
+            config.write(configfile)
+    except Exception as e:
+        pass
 
     with open('Astro_Colony/AstroColony/Saved/Config/WindowsServer/ServerSettings.ini', 'w') as server_settings_file:
         server_settings_file.write('[/Script/AstroColony.EHServerSubsystem]\n')
@@ -329,8 +330,6 @@ query_port_entry.pack()
 log_var = tk.BooleanVar()
 log_checkbutton = tk.Checkbutton(root, text="Enable Logging and Console", variable=log_var)
 log_checkbutton.pack()
-
-
 log_checkbutton.config(variable=log_var)
 
 download_steamcmd_button = tk.Button(root, text="Download SteamCMD & Install", command=download_steamcmd)
