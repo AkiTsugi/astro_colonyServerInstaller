@@ -1,18 +1,18 @@
 import tkinter as tk
+from tkinter import ttk
 import subprocess
+import threading
 import configparser
 import os
+import sys
 import requests
 import zipfile
 import psutil
 import shutil
 import ctypes
-import sys
 import webbrowser
-import threading
 import time
 import json
-import threading
 
 def is_admin():
     try:
