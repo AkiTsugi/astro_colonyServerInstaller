@@ -13,7 +13,7 @@ import threading
 import time
 import json
 import threading
-'''
+
 def is_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
@@ -34,7 +34,7 @@ def run_as_admin():
 if not is_admin():
     run_as_admin()
     sys.exit(0)
-'''
+
 
 running = True
 running2 = True
