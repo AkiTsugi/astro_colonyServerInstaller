@@ -13,7 +13,7 @@ import threading
 import time
 import json
 import threading
-
+'''
 def is_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
@@ -34,7 +34,7 @@ def run_as_admin():
 if not is_admin():
     run_as_admin()
     sys.exit(0)
-
+'''
 
 running = True
 running2 = True
@@ -300,19 +300,20 @@ def load_settings_into_fields():
 
 root = tk.Tk()
 root.title("Astro Colony Server Manager")
-root.geometry("300x820")
+root.geometry("550x490")
+left_frame = tk.Frame(root)
+left_frame.pack(side=tk.LEFT, padx=(35, 30), pady=5)
 
 
 
-
-server_name_label = tk.Label(root, text="Server Name:")
+server_name_label = tk.Label(left_frame, text="Server Name:")
 server_name_label.pack()
-server_name_entry = tk.Entry(root)
+server_name_entry = tk.Entry(left_frame)
 server_name_entry.pack()
 
 
 
-query_port_label = tk.Label(root, text="Query Port:")
+query_port_label = tk.Label(left_frame, text="Query Port:")
 query_port_label.pack()
 config = configparser.ConfigParser()
 if config.read('conf.ini'):
@@ -320,7 +321,7 @@ if config.read('conf.ini'):
 else:
     query_port = 27015 
 
-query_port_entry = tk.Entry(root)
+query_port_entry = tk.Entry(left_frame)
 query_port_entry.insert(0, query_port)
 query_port_entry.pack()
 
@@ -328,86 +329,39 @@ query_port_entry.pack()
 
 
 log_var = tk.BooleanVar()
-log_checkbutton = tk.Checkbutton(root, text="Enable Logging and Console", variable=log_var)
+log_checkbutton = tk.Checkbutton(left_frame, text="Enable Logging and Console", variable=log_var)
 log_checkbutton.pack()
 log_checkbutton.config(variable=log_var)
 
-download_steamcmd_button = tk.Button(root, text="Download SteamCMD & Install", command=download_steamcmd)
+download_steamcmd_button = tk.Button(left_frame, text="Download SteamCMD & Install", command=download_steamcmd)
 download_steamcmd_button.pack()
 
-download_astro_colony_button = tk.Button(root, text="Download Astro Colony and Update", command=download_astro_colony)
+download_astro_colony_button = tk.Button(left_frame, text="Download Astro Colony and Update", command=download_astro_colony)
 download_astro_colony_button.pack()
 
-create_server_button = tk.Button(root, text="Start Server", command=create_server)
+create_server_button = tk.Button(left_frame, text="Start Server", command=create_server)
 create_server_button.pack()
 
-kill_server_button = tk.Button(root, text="Close process AstroColonyServer", command=kill_server_process)
+kill_server_button = tk.Button(left_frame, text="Close process AstroColonyServer", command=kill_server_process)
 kill_server_button.pack()
 
-Install_service_button = tk.Button(root, text="Install Service", command=lambda: on_install_service(server_name_entry.get(), query_port_entry.get()))
+Install_service_button = tk.Button(left_frame, text="Install Service", command=lambda: on_install_service(server_name_entry.get(), query_port_entry.get()))
 Install_service_button.pack()
-start_service_button = tk.Button(root, text="Start Service", command=on_start_service)
+start_service_button = tk.Button(left_frame, text="Start Service", command=on_start_service)
 start_service_button.pack()
-stop_server_button = tk.Button(root, text="Stop Service", command=on_stop_service)
+stop_server_button = tk.Button(left_frame, text="Stop Service", command=on_stop_service)
 stop_server_button.pack()
-delete_server_button = tk.Button(root, text="Delete Service", command=on_delete_service)
+delete_server_button = tk.Button(left_frame, text="Delete Service", command=on_delete_service)
 delete_server_button.pack()
 
 
 
-open_ports_button = tk.Button(root, text="Open UDP Ports", command=lambda: open_ports(int(query_port_entry.get())))
+open_ports_button = tk.Button(left_frame, text="Open UDP Ports", command=lambda: open_ports(int(query_port_entry.get())))
 open_ports_button.pack()
 
 
-on_open_guide = tk.Button(root, text="Open Guide page", command=on_open_guide)
+on_open_guide = tk.Button(left_frame, text="Open Guide page", command=on_open_guide)
 on_open_guide.pack()
-
-
-server_password_label = tk.Label(root, text="Server Password:")
-server_password_label.pack()
-server_password_entry = tk.Entry(root)
-server_password_entry.pack()
-
-seed_label = tk.Label(root, text="Seed:")
-seed_label.pack()
-seed_entry = tk.Entry(root)
-seed_entry.pack()
-
-map_name_label = tk.Label(root, text="Map Name:")
-map_name_label.pack()
-map_name_entry = tk.Entry(root)
-map_name_entry.pack()
-
-max_players_label = tk.Label(root, text="Max Players:")
-max_players_label.pack()
-max_players_entry = tk.Entry(root)
-max_players_entry.pack()
-
-savegame_name_label = tk.Label(root, text="Savegame Name:")
-savegame_name_label.pack()
-savegame_name_entry = tk.Entry(root)
-savegame_name_entry.pack()
-
-load_latest_savegame_var = tk.BooleanVar()
-load_latest_savegame_checkbutton = tk.Checkbutton(root, text="Should Load Latest Savegame", variable=load_latest_savegame_var)
-load_latest_savegame_checkbutton.pack()
-
-admin_list_label = tk.Label(root, text="Admin List (Steam PlayerIDs, comma separated):")
-admin_list_label.pack()
-admin_list_entry = tk.Entry(root)
-admin_list_entry.pack()
-
-shared_technologies_var = tk.BooleanVar()
-shared_technologies_checkbutton = tk.Checkbutton(root, text="Shared Technologies", variable=shared_technologies_var)
-shared_technologies_checkbutton.pack()
-
-oxygen_consumption_var = tk.BooleanVar()
-oxygen_consumption_checkbutton = tk.Checkbutton(root, text="Oxygen Consumption", variable=oxygen_consumption_var)
-oxygen_consumption_checkbutton.pack()
-
-free_construction_var = tk.BooleanVar()
-free_construction_checkbutton = tk.Checkbutton(root, text="Free Construction", variable=free_construction_var)
-free_construction_checkbutton.pack()
 
 try:
     config = configparser.ConfigParser()
@@ -418,20 +372,80 @@ except Exception as e:
     print(e)
 
 
-currentt_version_label = tk.Label(root, text="Current version")
+currentt_version_label = tk.Label(left_frame, text="Current version")
 currentt_version_label.pack()
 # Create labels to display the current version and the latest version
-current_version_label = tk.Label(root, text=current_version)
+current_version_label = tk.Label(left_frame, text=current_version)
 current_version_label.pack()
 
-latestt_version_label = tk.Label(root, text="Latest version")
+latestt_version_label = tk.Label(left_frame, text="Latest version")
 latestt_version_label.pack()
-latest_version_label = tk.Label(root, text="Checking for updates...")
+latest_version_label = tk.Label(left_frame, text="Checking for updates...")
 latest_version_label.pack()
 
 # Create a label to display the status of the update
-status_label = tk.Label(root, text="")
+status_label = tk.Label(left_frame, text="")
 status_label.pack()
+
+
+right_frame = tk.Frame(root)
+right_frame.pack(side=tk.RIGHT, padx=(0, 10), pady=5)
+separator = tk.Frame(root, width=2, bd=1, relief=tk.SUNKEN)
+separator.pack(side=tk.LEFT, fill=tk.Y, padx=5)
+
+windos2_label = tk.Label(right_frame, text="Config ServerSettings.ini", font=("Helvetica", 12, "bold"), foreground="gray")
+windos2_label.pack(pady=10)
+
+
+
+
+server_password_label = tk.Label(right_frame, text="Server Password:")
+server_password_label.pack()
+server_password_entry = tk.Entry(right_frame)
+server_password_entry.pack()
+
+seed_label = tk.Label(right_frame, text="Seed:")
+seed_label.pack()
+seed_entry = tk.Entry(right_frame)
+seed_entry.pack()
+
+map_name_label = tk.Label(right_frame, text="Map Name:")
+map_name_label.pack()
+map_name_entry = tk.Entry(right_frame)
+map_name_entry.pack()
+
+max_players_label = tk.Label(right_frame, text="Max Players:")
+max_players_label.pack()
+max_players_entry = tk.Entry(right_frame)
+max_players_entry.pack()
+
+savegame_name_label = tk.Label(right_frame, text="Savegame Name:")
+savegame_name_label.pack()
+savegame_name_entry = tk.Entry(right_frame)
+savegame_name_entry.pack()
+
+load_latest_savegame_var = tk.BooleanVar()
+load_latest_savegame_checkbutton = tk.Checkbutton(right_frame, text="Should Load Latest Savegame", variable=load_latest_savegame_var)
+load_latest_savegame_checkbutton.pack()
+
+admin_list_label = tk.Label(right_frame, text="Admin List (Steam PlayerIDs, comma separated):")
+admin_list_label.pack()
+admin_list_entry = tk.Entry(right_frame)
+admin_list_entry.pack()
+
+shared_technologies_var = tk.BooleanVar()
+shared_technologies_checkbutton = tk.Checkbutton(right_frame, text="Shared Technologies", variable=shared_technologies_var)
+shared_technologies_checkbutton.pack()
+
+oxygen_consumption_var = tk.BooleanVar()
+oxygen_consumption_checkbutton = tk.Checkbutton(right_frame, text="Oxygen Consumption", variable=oxygen_consumption_var)
+oxygen_consumption_checkbutton.pack()
+
+free_construction_var = tk.BooleanVar()
+free_construction_checkbutton = tk.Checkbutton(right_frame, text="Free Construction", variable=free_construction_var)
+free_construction_checkbutton.pack()
+
+
 
 
 
