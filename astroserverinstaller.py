@@ -48,15 +48,19 @@ def update_version():
     global running
 
     while running:
-        # Make a request to the API to check for a new release
-        url = "https://api.steamcmd.net/v1/info/2662210"
-        response = requests.get(url)
-        data = response.json()
+        try:
+            # Make a request to the API to check for a new release
+            url = "https://api.steamcmd.net/v1/info/2662210"
+            response = requests.get(url)
+            response.raise_for_status()  
 
-        # Get the latest version
-        latest_version = data["data"]["2662210"]["_change_number"]
-        latest_version_label.config(text=str(latest_version))
+            data = response.json()
 
+            # Get the latest version
+            latest_version = data["data"]["2662210"]["_change_number"]
+            latest_version_label.config(text=str(latest_version))
+        except:
+            pass
         # Wait for 300 seconds before making the next request
         time.sleep(300)
 
