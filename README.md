@@ -1,4 +1,5 @@
 # Astro Colony Server Installer
+![GitHub all releases](https://img.shields.io/github/downloads/asidsx/astro_colonyServerInstaller/total)
 
 To create a server, choose the folder where you want to deploy it, then place this program in that folder and start it. Next, click on "Download SteamCMD & Install".
 
