@@ -236,7 +236,7 @@ def save_configs():
         pass
 
     with open('Astro_Colony/AstroColony/Saved/Config/WindowsServer/ServerSettings.ini', 'w') as server_settings_file:
-        server_settings_file.write('[/Script/AstroColony.EHServerSubsystem]\n')
+        server_settings_file.write('[/Script/ACFeature.EHServerSubsystem]\n')
         server_settings_file.write(f'ServerPassword={server_password}\n')
         server_settings_file.write(f'Seed={seed}\n')
         server_settings_file.write(f'MapName={map_name}\n')
